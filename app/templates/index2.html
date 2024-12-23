@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Display JSON</title>
+    <style>
+        /* Optionally, style the pre element to make the JSON more readable */
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap; /* Wrap long lines */
+        }
+    </style>
+</head>
+<body>
+
+    <h1>JSON Output</h1>
+    <pre id="json-output"></pre> <!-- The pre tag will display the JSON data -->
+
+    <script>
+        // Example JSON object
+        const jsonData = {
+            "name": "John Doe",
+            "age": 30,
+            "city": "New York",
+            "languages": ["English", "Spanish"]
+        };
+
+        // Convert JSON object to a string and display it in the pre tag
+        const jsonString = JSON.stringify(jsonData, null, 2); // 2 is for indentation
+        document.getElementById("json-output").textContent = jsonString;
+    </script>
+
+</body>
+</html>

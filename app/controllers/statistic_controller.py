@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify
 import app.services.statistic_service as statistic_service
+import app.services.map_service as map_service
 
 statistics_blueprint = Blueprint('statistics', __name__)
 
@@ -19,7 +20,7 @@ def get_avg_casualties_per_area(area_type, filter_top5: str):
     try:
         only_top5 = filter_top5.lower() in ['y', 'yes', 'true']
         res = statistic_service.get_avg_casualties_per_area(area_type=area_type, only_top5=True if only_top5 else False)
-        return jsonify(res), 200
+        return res
     except Exception as e:
         return jsonify({"error": e}), 500
 
@@ -37,7 +38,7 @@ def get_top_terror_groups_by_casualties():
 def attack_percentage_change_by_year(area_type: str, area_id: int):
     try:
         res = statistic_service.attack_percentage_change_by_year(area_type, area_id)
-        return jsonify(res), 200
+        return res
     except Exception as e:
         return jsonify({"error": e}), 500
 
@@ -45,7 +46,16 @@ def attack_percentage_change_by_year(area_type: str, area_id: int):
 @statistics_blueprint.route('/most-active-terror-group/<area_type>/<area_id>', methods=['GET'])
 def most_active_terror_group(area_type: str, area_id: int):
     try:
-        res = statistic_service.most_active_terror_group(area_type, area_id)
-        return jsonify(res), 200
+        res = statistic_service.most_active_terror_group_map(area_type, area_id)
+        return res
+    except Exception as e:
+        return jsonify({"error": e}), 500
+
+
+@statistics_blueprint.route('/get_map/<area_name>/<area_type>', methods=['GET'])
+def get_map(area_name: str, area_type: str):
+    try:
+        res = map_service.get_map(area_name, area_type=area_type)
+        return res
     except Exception as e:
         return jsonify({"error": e}), 500

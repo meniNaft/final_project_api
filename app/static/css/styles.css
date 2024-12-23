@@ -1,0 +1,129 @@
+    /* General Body Styles */
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f9;
+    }
+
+    /* Container Style */
+    .container {
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+        background: #ffffff;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+    }
+
+    /* Header Style */
+    h1 {
+        text-align: center;
+        color: #333;
+    }
+
+    /* Dropdown Select Styles */
+    label {
+        display: block;
+        margin: 10px 0 5px;
+        font-weight: bold;
+    }
+
+    select, input {
+        width: 100%;
+        padding: 10px;
+        margin: 5px 0 15px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    /* Button Styles */
+    button {
+        background-color: #007BFF;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    button:hover {
+        background-color: #0056b3;
+    }
+
+    /* Error Message Style */
+    .error {
+        color: red;
+        margin-top: 10px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .container {
+            padding: 15px;
+        }
+
+        select, input {
+            padding: 8px;
+        }
+
+        button {
+            padding: 8px 16px;
+        }
+    }
+
+
+/* Result container styles */
+#result-container {
+    max-height: 400px;
+    overflow-y: auto;
+    background-color: #f7f7f7;
+    padding: 15px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    font-family: monospace;
+    white-space: pre-wrap; /* Allows wrapping of long lines */
+    word-wrap: break-word; /* Ensures words break and don't overflow */
+}
+
+/* Style for JSON structure */
+#result {
+    font-size: 14px;
+    color: #333;
+}
+
+/* Additional styling for JSON key-value pairs */
+#result span.key {
+    color: #007BFF;
+    font-weight: bold;
+}
+
+#result span.value {
+    color: #e04e3f;
+}
+
+/* JSON array and object styling */
+#result span.array {
+    color: #28a745;
+}
+
+#result span.object {
+    color: #6f42c1;
+}
+
+
+pre {
+    background-color: #f4f4f4;
+    padding: 10px;
+    border-radius: 5px;
+    font-family: monospace;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    color: #555555;
+}
+
+#map-container {
+    height: 500px; /* Adjust the height as needed */
+    width: 100%; /* Ensures it takes full width of the container */
+}

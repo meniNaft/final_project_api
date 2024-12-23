@@ -33,6 +33,7 @@ def get_avg_casualties_per_area(only_top5: bool, area_type: str):
         state = aliased(State)
         event = aliased(Event)
 
+        # Calculate casualties in the same way as before
         query = session.query(
             func.round(
                 (func.sum(event.civilian_killed_count) * 2 + func.sum(event.civilian_injured_count)) / func.count(
@@ -43,7 +44,7 @@ def get_avg_casualties_per_area(only_top5: bool, area_type: str):
         if area_type == 'city':
             selected_area = aliased(City)
             query = (query
-                     .add_columns(selected_area.name)
+                     .add_columns(selected_area.name, selected_area.lat, selected_area.lon)
                      .join(selected_area, selected_area.id == event.city_id)
                      .group_by(selected_area.id)
                      .order_by(desc('Casualties')))
@@ -51,7 +52,9 @@ def get_avg_casualties_per_area(only_top5: bool, area_type: str):
         elif area_type == 'state':
             selected_area = aliased(State)
             query = (query
-                     .add_columns(selected_area.name)
+                     .add_columns(selected_area.name,
+                                  func.min(city.lat).label('lat'),
+                                  func.min(city.lon).label('lon'))
                      .join(city, city.id == event.city_id)
                      .join(selected_area, selected_area.id == city.state_id)
                      .group_by(selected_area.id)
@@ -60,17 +63,21 @@ def get_avg_casualties_per_area(only_top5: bool, area_type: str):
         elif area_type == 'country':
             selected_area = aliased(Country)
             query = (query
-                     .add_columns(selected_area.name)
+                     .add_columns(selected_area.name,
+                                  func.min(city.lat).label('lat'),  # Get latitude of first city in the country
+                                  func.min(city.lon).label('lon'))  # Get longitude of first city in the country
                      .join(city, city.id == event.city_id)
                      .join(state, state.id == city.state_id)
                      .join(selected_area, selected_area.id == state.country_id)
                      .group_by(selected_area.id)
                      .order_by(desc('Casualties')))
 
-        else:
+        else:  # region level
             selected_area = aliased(Region)
             query = (query
-                     .add_columns(selected_area.name)
+                     .add_columns(selected_area.name,
+                                  func.min(city.lat).label('lat'),  # Get latitude of first city in the region
+                                  func.min(city.lon).label('lon'))  # Get longitude of first city in the region
                      .join(city, city.id == event.city_id)
                      .join(state, state.id == city.state_id)
                      .join(country, country.id == state.country_id)
@@ -117,7 +124,7 @@ def attack_percentage_change_by_year(area_type, area_id):
 
         if area_type == 'city':
             selected_area = aliased(City)
-            query = query.add_columns(selected_area.name) \
+            query = query.add_columns(selected_area.name, selected_area.lat, selected_area.lon) \
                 .join(selected_area, selected_area.id == event.city_id) \
                 .filter(selected_area.id == area_id) \
                 .group_by(selected_area.id, func.extract('year', event.date)) \
@@ -125,7 +132,9 @@ def attack_percentage_change_by_year(area_type, area_id):
 
         elif area_type == 'state':
             selected_area = aliased(State)
-            query = query.add_columns(selected_area.name) \
+            query = query.add_columns(selected_area.name,
+                                      func.min(city.lat).label('lat'),
+                                      func.min(city.lon).label('lon')) \
                 .join(city, city.id == event.city_id) \
                 .join(selected_area, selected_area.id == city.state_id) \
                 .filter(selected_area.id == area_id) \
@@ -134,7 +143,9 @@ def attack_percentage_change_by_year(area_type, area_id):
 
         elif area_type == 'country':
             selected_area = aliased(Country)
-            query = query.add_columns(selected_area.name) \
+            query = query.add_columns(selected_area.name,
+                                      func.min(city.lat).label('lat'),
+                                      func.min(city.lon).label('lon')) \
                 .join(city, city.id == event.city_id) \
                 .join(state, state.id == city.state_id) \
                 .join(selected_area, selected_area.id == state.country_id) \
@@ -144,7 +155,9 @@ def attack_percentage_change_by_year(area_type, area_id):
 
         elif area_type == 'region':
             selected_area = aliased(Region)
-            query = query.add_columns(selected_area.name) \
+            query = query.add_columns(selected_area.name,
+                                      func.min(city.lat).label('lat'),
+                                      func.min(city.lon).label('lon')) \
                 .join(city, city.id == event.city_id) \
                 .join(state, state.id == city.state_id) \
                 .join(country, country.id == state.country_id) \
@@ -166,26 +179,49 @@ def most_active_terror_group(area_type, area_id):
             .join(Event.terror_groups))
 
         if area_type == 'city':
-            query = (query.join(City, City.id == Event.city_id)
+            query = (query
+                     .add_columns(
+                        func.min(City.lat).label('lat'),
+                        func.min(City.lon).label('lon'),
+                        City.name.label('area_name'))
+                     .join(City, City.id == Event.city_id)
                      .filter(City.id == area_id))
+            group_by_fields = [TerrorGroup.id, City.name]
         elif area_type == 'state':
-            query = (query.join(City, City.id == Event.city_id)
+            query = (query
+                     .add_columns(
+                        func.min(City.lat).label('lat'),
+                        func.min(City.lon).label('lon'),
+                        State.name.label('area_name'))
+                     .join(City, City.id == Event.city_id)
                      .join(State, State.id == City.state_id)
                      .filter(State.id == area_id))
+            group_by_fields = [TerrorGroup.id, State.name]
         elif area_type == 'country':
-            query = (query.join(City, City.id == Event.city_id)
+            query = (query.add_columns(
+                func.min(City.lat).label('lat'),
+                func.min(City.lon).label('lon'),
+                Country.name.label('area_name'))
+                     .join(City, City.id == Event.city_id)
                      .join(State, State.id == City.state_id)
                      .join(Country, Country.id == State.country_id)
                      .filter(Country.id == area_id))
+            group_by_fields = [TerrorGroup.id, Country.name]
         elif area_type == 'region':
-            query = (query.join(City, City.id == Event.city_id)
+            query = (query
+                     .add_columns(
+                        func.min(City.lat).label('lat'),
+                        func.min(City.lon).label('lon'),
+                        Region.name.label('area_name'))
+                     .join(City, City.id == Event.city_id)
                      .join(State, State.id == City.state_id)
                      .join(Country, Country.id == State.country_id)
                      .join(Region, Region.id == Country.region_id)
                      .filter(Region.id == area_id))
+            group_by_fields = [TerrorGroup.id, Region.name]
 
         return (query
-                .group_by(TerrorGroup.id)
+                .group_by(*group_by_fields)
                 .order_by(desc('attack_count'))
                 .limit(5)
                 .all())
