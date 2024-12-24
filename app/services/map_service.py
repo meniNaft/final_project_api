@@ -17,6 +17,55 @@ def get_map(area_data: list, area_type: str, zoom_level: str, callback):
     return m._repr_html_()
 
 
+def add_area_terror_group_markers_to_map(map, data, area_type):
+    for event in data:
+        try:
+            area_name = event[area_type]
+            lat = event["Latitude"]
+            lon = event["Longitude"]
+            groups = event["Groups"]
+            popup_content = (f"<b>{area_type}:</b><br>{area_name}<br><br><b>Terror Groups:</b><br>"
+                             f"<ul style='min-width: 200px; max-height: 200px; overflow-y: scroll;'>")
+            for group in groups:
+                popup_content += f"<li>{group}</li>"
+            popup_content += "</ul>"
+
+            folium.Marker(
+                [lat, lon],
+                popup=popup_content,
+                icon=folium.Icon(color="red", icon="info-sign")
+            ).add_to(map)
+        except Exception as e:
+            print(f"Error processing event {event}: {e}")
+            continue
+
+
+def add_attack_type_terror_group_markers_to_map(map, data, area_type):
+    for event in data:
+        try:
+            attack_type = event["MostCommonAttackType"]
+            lat = event["Latitude"]
+            lon = event["Longitude"]
+            groups = event["Groups"]
+            area_name = event[area_type]
+
+            popup_content = (f"<b>{area_type}:</b><br>{area_name}<br><br><b>Attack Type:</b><br>{attack_type}<br><br"
+                             f"><b>Terror Groups:</b><br>"
+                             f"<ul style='min-width: 200px; max-height: 200px; overflow-y: scroll;'>")
+            for group in groups:
+                popup_content += f"<li>{group}</li>"
+            popup_content += "</ul>"
+
+            folium.Marker(
+                [lat, lon],
+                popup=popup_content,
+                icon=folium.Icon(color="red", icon="info-sign")
+            ).add_to(map)
+        except Exception as e:
+            print(f"Error processing event {event}: {e}")
+            continue
+
+
 def add_text_search_markers_to_map(map, data, area_type):
     for event in data:
         try:

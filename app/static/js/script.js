@@ -12,6 +12,10 @@ document.addEventListener('DOMContentLoaded', () => {
     { name: 'Attack Percentage Change By Year', value: 'statistics/attack-percentage-change-by-year', params: ['area_type', 'area_id'] },
     { name: 'Most Active Terror Group', value: 'statistics/most-active-terror-group', params: ['area_type', 'area_id'] },
 
+    { name: 'Terror Groups With Shared Targets By Area', value: 'statistics/relationship/shared-targets', params: ['area_type'] },
+    { name: 'Cooperating Terror Groups', value: 'statistics/relationship/cooperating-groups', params: [] },
+    { name: 'Terror Groups With Shared Attack Types By Area', value: 'statistics/relationship/shared-attack-types', params: ['area_type'] },
+
     { name: 'Search Keywords', value: 'search/keywords', params: ['query'] },
     { name: 'Search News', value: 'search/news', params: ['query'] },
     { name: 'Search Historic', value: 'search/historic', params: ['query'] },
