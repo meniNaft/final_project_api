@@ -1,25 +1,28 @@
 from datetime import datetime
-from flask import jsonify, Blueprint
-import app.services.search_service as search_service # Import the SearchService
+from flask import jsonify, Blueprint, request
+import app.services.search_service as search_service
 
 search_blueprint = Blueprint('search', __name__)
 
 
 @search_blueprint.route('/keywords/<string:query>', methods=['GET'])
 def search_keywords(query: str):
-    result = search_service.search_keywords(query)
+    limit = request.args.get('limit', type=int)
+    result = search_service.search_keywords(query, limit)
     return result
 
 
 @search_blueprint.route('/news/<string:query>', methods=['GET'])
 def search_news(query: str):
-    result = search_service.search_news(query)
+    limit = request.args.get('limit', type=int)
+    result = search_service.search_news(query, limit)
     return result
 
 
 @search_blueprint.route('/historic/<string:query>', methods=['GET'])
 def search_historic(query: str):
-    result = search_service.search_historic(query)
+    limit = request.args.get('limit', type=int)
+    result = search_service.search_historic(query, limit)
     return result
 
 
@@ -34,5 +37,6 @@ def search_combined(query: str, start_date: str, end_date: str):
     if start_date_parsed > end_date_parsed:
         return jsonify({"error": "Start date cannot be after end date"}), 400
 
-    result = search_service.search_combined(query, start_date_parsed, end_date_parsed)
+    limit = request.args.get('limit', type=int)
+    result = search_service.search_combined(query, start_date_parsed, end_date_parsed, limit)
     return result

@@ -1,5 +1,4 @@
 from flask import Flask, render_template
-
 from app.controllers.search_controller import search_blueprint
 from app.controllers.statistic_controller import statistics_blueprint
 

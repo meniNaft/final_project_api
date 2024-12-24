@@ -43,6 +43,25 @@ document.addEventListener('DOMContentLoaded', () => {
         paramsContainer.appendChild(label);
         paramsContainer.appendChild(input);
       });
+
+      const searchEndpoints = [
+      'search/keywords',
+      'search/news',
+      'search/historic',
+      'search/combined'
+    ];
+
+    if (searchEndpoints.includes(selectedEndpoint.value)) {
+      const label = document.createElement('label');
+      label.textContent = "Enter limit (optional):";
+
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.id = 'limit';  // Add input for limit
+
+      paramsContainer.appendChild(label);
+      paramsContainer.appendChild(input);
+    }
     }
   });
 
@@ -62,6 +81,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (queryParams) {
       url += `/${queryParams}`;
+    }
+
+    const limit = document.getElementById('limit') ? document.getElementById('limit').value : '';
+    if (limit) {
+      url += `?limit=${limit}`;
     }
 
     try {

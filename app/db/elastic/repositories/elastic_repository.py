@@ -4,7 +4,7 @@ es = Elasticsearch("http://localhost:9200")
 index_name = "terror_attack_data"
 
 
-def search_keywords(query: str):
+def search_keywords(query: str, limit: int = None):
     body = {
         "query": {
             "multi_match": {
@@ -13,11 +13,14 @@ def search_keywords(query: str):
             }
         }
     }
+    if limit is not None:
+        body["size"] = limit
+
     response = es.search(index=index_name, body=body)
     return response['hits']['hits']
 
 
-def search_news(query: str):
+def search_news(query: str, limit: int = None):
     body = {
         "query": {
             "bool": {
@@ -28,11 +31,14 @@ def search_news(query: str):
             }
         }
     }
+    if limit is not None:
+        body["size"] = limit
+
     response = es.search(index=index_name, body=body)
     return response['hits']['hits']
 
 
-def search_historic(query: str):
+def search_historic(query: str, limit: int = None):
     body = {
         "query": {
             "bool": {
@@ -43,11 +49,14 @@ def search_historic(query: str):
             }
         }
     }
+    if limit is not None:
+        body["size"] = limit
+
     response = es.search(index=index_name, body=body)
     return response['hits']['hits']
 
 
-def search_combined(query: str, start_date: str, end_date: str):
+def search_combined(query: str, start_date: str, end_date: str, limit: int = None):
     must_clauses = [
         {"multi_match": {"query": query, "fields": ["body", "title"]}},
         {
@@ -67,5 +76,8 @@ def search_combined(query: str, start_date: str, end_date: str):
             }
         }
     }
+    if limit is not None:
+        body["size"] = limit
+
     response = es.search(index=index_name, body=body)
     return response['hits']['hits']

@@ -1,6 +1,5 @@
 from flask import Blueprint, jsonify
 import app.services.statistic_service as statistic_service
-import app.services.map_service as map_service
 
 statistics_blueprint = Blueprint('statistics', __name__)
 
@@ -47,15 +46,6 @@ def attack_percentage_change_by_year(area_type: str, area_id: int):
 def most_active_terror_group(area_type: str, area_id: int):
     try:
         res = statistic_service.most_active_terror_group_map(area_type, area_id)
-        return res
-    except Exception as e:
-        return jsonify({"error": e}), 500
-
-
-@statistics_blueprint.route('/get_map/<area_name>/<area_type>', methods=['GET'])
-def get_map(area_name: str, area_type: str):
-    try:
-        res = map_service.get_map(area_name, area_type=area_type)
         return res
     except Exception as e:
         return jsonify({"error": e}), 500
