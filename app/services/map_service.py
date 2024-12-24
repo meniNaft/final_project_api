@@ -40,6 +40,13 @@ def add_text_search_markers_to_map(map, data, area_type):
 
 
 def add_avg_casualties_marker_to_map(map, area_data, area_type):
+    def get_color(average):
+        if average < 5:
+            return 'green'
+        elif average < 10:
+            return 'orange'
+        return 'red'
+
     for area in area_data:
         try:
             area_name = area[area_type]
@@ -48,7 +55,7 @@ def add_avg_casualties_marker_to_map(map, area_data, area_type):
             folium.Marker(
                 [area['lat'], area['lon']],
                 popup=f"<b>{area_name}</b><br><br>Casualties: {casualties}",
-                icon=folium.Icon(color="red", icon="info-sign")
+                icon=folium.Icon(color=get_color(area["casualties"]), icon="info-sign")
             ).add_to(map)
         except:
             continue
