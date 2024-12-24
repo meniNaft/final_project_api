@@ -1,4 +1,5 @@
 import folium
+from folium.plugins import MarkerCluster
 from geopy.geocoders import Nominatim
 import tempfile
 
@@ -6,9 +7,11 @@ geolocator = Nominatim(user_agent="geoapi")
 
 
 def get_map(area_data: list, area_type: str, zoom_level: str, callback):
-    location =[20, 0] if zoom_level == "region" else [area_data[0]['lat'], area_data[0]['lon']]
+    location = [20, 0] if zoom_level == "region" else [area_data[0]['lat'], area_data[0]['lon']]
     m = folium.Map(location=location, zoom_start=get_zoom_level(zoom_level))
-    callback(m, area_data, area_type)
+    marker_cluster = MarkerCluster().add_to(m)
+
+    callback(marker_cluster, area_data, area_type)
     with tempfile.NamedTemporaryFile('w', encoding='utf-8', suffix='.html', delete=False) as f:
         f.write(m._repr_html_())
     return m._repr_html_()
