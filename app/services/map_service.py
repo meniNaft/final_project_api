@@ -14,6 +14,31 @@ def get_map(area_data: list, area_type: str, zoom_level: str, callback):
     return m._repr_html_()
 
 
+def add_text_search_markers_to_map(map, data, area_type):
+    for event in data:
+        try:
+            title = event["title"]
+            lat = event["lat"]
+            lon = event["lon"]
+            body = event["body"]
+            category = event["category"]
+            date = event["date"]
+
+            popup_content = (f"<b>Title</b><br>{title}<br><br><b>Category:</b> {category}<br><b>Date:</b> {date}<br><br><b"
+                             f">Details:</b><br>")
+            popup_content += f'<div style="min-width: 200px; max-height: 200px; overflow-y: scroll;">{body}</div>'
+
+            folium.Marker(
+                [lat, lon],
+                popup=popup_content,
+                icon=folium.Icon(color="green", icon="info-sign")
+            ).add_to(map)
+
+        except Exception as e:
+            print(f"Error processing event {event}: {e}")
+            continue
+
+
 def add_avg_casualties_marker_to_map(map, area_data, area_type):
     for area in area_data:
         try:
@@ -96,13 +121,6 @@ def add_terror_group_marker_to_map(map, area_data, area_type):
         except Exception as e:
             print(f"Error processing area {area}: {e}")
             continue
-
-
-def get_coordination_by_city_id(city_name: str):
-    location = geolocator.geocode(city_name)
-    if not location:
-        raise ValueError(f"Could not find location for city: {city_name}")
-    return location
 
 
 def get_zoom_level(area_type: str) -> int:

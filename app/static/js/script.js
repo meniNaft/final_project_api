@@ -5,13 +5,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const resultContainer = document.getElementById('json-output');
   const mapContainer = document.getElementById('map-container');  // New container for map
 
-  // Define endpoint options
   const endpoints = [
-    { name: 'Deadliest Attack Types', value: 'deadliest-attack-types', params: ['filter_top5'] },
-    { name: 'Avg Casualties Per Area', value: 'avg-casualties-per-area', params: ['area_type', 'filter_top5'] },
-    { name: 'Top Terror Groups By Casualties', value: 'top-terror-groups-by-casualties', params: [] },
-    { name: 'Attack Percentage Change By Year', value: 'attack-percentage-change-by-year', params: ['area_type', 'area_id'] },
-    { name: 'Most Active Terror Group', value: 'most-active-terror-group', params: ['area_type', 'area_id'] }
+    { name: 'Deadliest Attack Types', value: 'statistics/deadliest-attack-types', params: ['filter_top5'] },
+    { name: 'Avg Casualties Per Area', value: 'statistics/avg-casualties-per-area', params: ['area_type', 'filter_top5'] },
+    { name: 'Top Terror Groups By Casualties', value: 'statistics/top-terror-groups-by-casualties', params: [] },
+    { name: 'Attack Percentage Change By Year', value: 'statistics/attack-percentage-change-by-year', params: ['area_type', 'area_id'] },
+    { name: 'Most Active Terror Group', value: 'statistics/most-active-terror-group', params: ['area_type', 'area_id'] },
+
+    { name: 'Search Keywords', value: 'search/keywords', params: ['query'] },
+    { name: 'Search News', value: 'search/news', params: ['query'] },
+    { name: 'Search Historic', value: 'search/historic', params: ['query'] },
+    { name: 'Search Combined', value: 'search/combined', params: ['query', 'start_date', 'end_date'] }
   ];
 
   // Populate dropdown options
@@ -50,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    let url = `/api/statistics/${selectedEndpoint.value}`;
+    let url = `/api/${selectedEndpoint.value}`;
     const queryParams = selectedEndpoint.params.map(param => {
       const input = document.getElementById(param);
       return input ? input.value : '';
