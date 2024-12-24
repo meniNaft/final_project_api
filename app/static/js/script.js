@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     { name: 'Terror Groups With Shared Targets By Area', value: 'statistics/relationship/shared-targets', params: ['area_type'] },
     { name: 'Cooperating Terror Groups', value: 'statistics/relationship/cooperating-groups', params: [] },
     { name: 'Terror Groups With Shared Attack Types By Area', value: 'statistics/relationship/shared-attack-types', params: ['area_type'] },
+    { name: 'Top Group City By Area', value: 'statistics/relationship/top-group-city', params: ['area_type'] },
 
     { name: 'Search Keywords', value: 'search/keywords', params: ['query'] },
     { name: 'Search News', value: 'search/news', params: ['query'] },

@@ -63,6 +63,28 @@ def get_shared_attack_types(area_type: str):
         return res
 
 
+def top_group_city_by_area(area_type: str):
+    with driver.session() as session:
+        query = f"""
+        MATCH {get_area_type_full_path(area_type)} (city:City)<-[:HAPPENED_IN]-(event:Event)-[:COMMITTED_BY]->(
+        group:Group_Name) WITH {area_type}, city, COLLECT(DISTINCT group.name) AS groups, 
+        COUNT(DISTINCT group.name) AS group_count ORDER BY {area_type}, group_count DESC
+        WITH {area_type},
+        """
+        query += """COLLECT({city: city.name, lat: city.lat, lon: city.lon, count: group_count, groups: groups})[0] AS top_city"""
+        query += f"""
+        RETURN {area_type}.name AS {area_type}, 
+        top_city.city AS city_name, 
+        top_city.lat AS lat, 
+        top_city.lon AS lon, 
+        top_city.count AS group_count, 
+        top_city.groups AS groups 
+        ORDER BY {area_type};
+        """
+        res = session.run(query).data()
+        return res
+
+
 def get_area_type_full_path(area_type):
     if area_type == 'city':
         return ''

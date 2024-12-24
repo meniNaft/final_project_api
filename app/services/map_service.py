@@ -66,6 +66,35 @@ def add_attack_type_terror_group_markers_to_map(map, data, area_type):
             continue
 
 
+def add_top_group_city_by_area_markers_to_map(map, data, area_type):
+    for event in data:
+        try:
+            lat = event["lat"]
+            lon = event["lon"]
+            groups = event["groups"]
+            groups_count = event["group_count"]
+            city = event['city_name']
+            area_name = event[area_type]
+
+            popup_content = (f"<b>{area_type}:</b><br>{area_name}<br><br>"
+                             f"<b>city:</b><br>{city}<br><br>"
+                             f"<b>group count:</b><br>{groups_count}<br><br"
+                             f"><b>Terror Groups:</b><br>"
+                             f"<ul style='min-width: 200px; max-height: 200px; overflow-y: scroll;'>")
+            for group in groups:
+                popup_content += f"<li>{group}</li>"
+            popup_content += "</ul>"
+
+            folium.Marker(
+                [lat, lon],
+                popup=popup_content,
+                icon=folium.Icon(color="red", icon="info-sign")
+            ).add_to(map)
+        except Exception as e:
+            print(f"Error processing event {event}: {e}")
+            continue
+
+
 def add_text_search_markers_to_map(map, data, area_type):
     for event in data:
         try:

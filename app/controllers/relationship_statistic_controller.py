@@ -26,3 +26,11 @@ def get_shared_attack_types(area_type: str):
         return relationship_statistic_service.get_shared_attack_types(area_type)
     except Exception as e:
         return jsonify({"error": e}), 500
+
+
+@relation_statistics_blueprint.route('/top-group-city/<area_type>', methods=['GET'])
+def get_top_group_city_by_area(area_type: str):
+    try:
+        return relationship_statistic_service.top_group_city_by_area(area_type)
+    except Exception as e:
+        return jsonify({"error": e}), 500
