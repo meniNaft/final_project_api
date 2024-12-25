@@ -85,6 +85,21 @@ def top_group_city_by_area(area_type: str):
         return res
 
 
+def get_groups_attacked_same_target_same_year():
+    with driver.session() as session:
+        query = """
+        MATCH (group1:Group_Name) <- [:COMMITTED_BY] - (event1:Event)-[:TARGETED]->(targetType:Target_Type),
+          (group2:Group_Name) <- [:COMMITTED_BY]- (event2:Event) -[:TARGETED]->(targetType)
+        WHERE group1 <> group2 AND event1.date.year = event2.date.year
+        WITH DISTINCT event1.date.year AS year, targetType.name AS target_type, 
+                      COLLECT(DISTINCT group1.name) + COLLECT(DISTINCT group2.name) AS groups
+        RETURN year, target_type, REDUCE(s = [], g IN groups | CASE WHEN NOT g IN s THEN s + g ELSE s END) AS unique_groups
+        ORDER BY year, target_type;
+        """
+        res = session.run(query).data()
+        return res
+
+
 def get_area_type_full_path(area_type):
     if area_type == 'city':
         return ''

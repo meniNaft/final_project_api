@@ -54,3 +54,7 @@ def top_group_city_by_area(area_type: str = ''):
         )
     else:
         return jsonify({"message": "no data found"})
+
+
+def get_groups_attacked_same_target_same_year():
+    return neo4j_repo.get_groups_attacked_same_target_same_year()
